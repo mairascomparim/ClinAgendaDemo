@@ -20,7 +20,7 @@ namespace ClinAgenda.src.Infrastructure.Repositories
         }
         public async Task<IEnumerable<DoctorListDTO>> GetDoctorsAsync(string? name, int? specialtyId, int? statusId, int offset, int itemsPerPage)
         {
-
+            
             var innerJoins = new StringBuilder(@"
                 FROM DOCTOR D
                 INNER JOIN STATUS S ON D.STATUSID = S.ID
@@ -28,7 +28,7 @@ namespace ClinAgenda.src.Infrastructure.Repositories
                 WHERE 1 = 1 ");
 
             var parameters = new DynamicParameters();
-
+            
             if (!string.IsNullOrEmpty(name))
             {
                 innerJoins.Append("AND D.NAME LIKE @Name");
