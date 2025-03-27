@@ -42,15 +42,14 @@ namespace ClinAgenda.src.Application.UseCases
                     Id = d.StatusId,
                     Name = d.StatusName
                 },
-                Specialty = specialties
-            .Where(s => s.DoctorId == d.Id)
-            .Select(s => new SpecialtyDTO
-            {
-                Id = s.SpecialtyId,
-                Name = s.SpecialtyName,
-                ScheduleDuration = s.ScheduleDuration
-            })
-            .ToList()
+                Specialty = specialties.Where(s => s.DoctorId == d.Id)
+                    .Select(s => new SpecialtyDTO
+                    {
+                        Id = s.SpecialtyId,
+                        Name = s.SpecialtyName,
+                        ScheduleDuration = s.ScheduleDuration
+                    }
+                    ).ToList()
             });
 
             return new
