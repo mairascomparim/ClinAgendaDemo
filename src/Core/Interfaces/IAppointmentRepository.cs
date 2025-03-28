@@ -12,5 +12,6 @@ namespace ClinAgenda.src.Core.Interfaces
         Task<int> InsertAppointmentAsync(AppointmentDTO appointment);
         Task<AppointmentDTO?> GetByIdAsync(int id);
         Task<bool> UpdateAsync(AppointmentInsertDTO appointment);
+        Task<int> DeleteAsync(int appointmentId);
     }
 }

@@ -17,8 +17,10 @@ builder.Services.AddSwaggerGen();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddScoped<MySqlConnection>(_ => new MySqlConnection(connectionString));
 
-builder.Services.AddScoped<IStatusRepository, StatusRepository>();
+// Injeção de dependências 
 builder.Services.AddScoped<StatusUseCase>();
+builder.Services.AddScoped<IStatusRepository, StatusRepository>();
+
 
 builder.Services.AddScoped<ISpecialtyRepository, SpecialtyRepository>();
 builder.Services.AddScoped<SpecialtyUseCase>();
@@ -30,6 +32,10 @@ builder.Services.AddScoped<IDoctorRepository, DoctorRepository>();
 builder.Services.AddScoped<DoctorUseCase>();
 
 builder.Services.AddScoped<IDoctorSpecialtyRepository, DoctorSpecialtyRepository>();
+
+builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+builder.Services.AddScoped<AppointmentUseCase>();
+
 
 var app = builder.Build();
 
