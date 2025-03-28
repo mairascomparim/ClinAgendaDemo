@@ -13,6 +13,6 @@ namespace ClinAgenda.src.Core.Interfaces
         Task<int> InsertDoctorAsync(DoctorInsertDTO doctor);
         Task<IEnumerable<DoctorListDTO>> GetByIdAsync(int id);
         Task<bool> UpdateAsync(DoctorDTO doctor);
-         Task<int> DeleteByDoctorIdAsync(int id);
+        Task<int> DeleteByDoctorIdAsync(int id);
     }
 }

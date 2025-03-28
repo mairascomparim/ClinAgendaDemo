@@ -79,9 +79,13 @@ namespace ClinAgenda.src.Application.UseCases
                               }
                           })
                           .ToList();
-                          
+
             return patients;
         }
-
+        public async Task<bool> DeletPatientByIdAsync(int id)
+        {
+            var rowsAffected = await _patientRepository.DeleteByPatientIdAsync(id);
+            return rowsAffected > 0;
+        }
     }
 }

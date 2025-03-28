@@ -17,7 +17,7 @@ namespace ClinAgenda.src.Application.UseCases
         {
             _appointmentRepository = appointmentRepository;
         }
-        public async Task<object> GetAppointmentsAsync(string? patientName, string? doctorName, int? specialtyId, int itemsPerPage, int page)
+        public async Task<AppointmentResponseDTO> GetAppointmentsAsync(string? patientName, string? doctorName, int? specialtyId, int itemsPerPage, int page)
         {
             var (total, rawData) = await _appointmentRepository.GetAppointmentsAsync(patientName, doctorName, specialtyId, itemsPerPage, page);
             var appointmentMap = new Dictionary<int, AppointmentListReturnDTO>();
@@ -48,10 +48,10 @@ namespace ClinAgenda.src.Application.UseCases
                 }
             }
 
-            return new
+            return new AppointmentResponseDTO
             {
-                total,
-                items = appointmentMap.Values.ToList()
+                Total = total,
+                Items = appointmentMap.Values.ToList()
             };
         }
 
@@ -82,10 +82,10 @@ namespace ClinAgenda.src.Application.UseCases
 
             return isUpdated;
         }
-        public async Task<bool> DeletAppointmentByIdAsync(int id)
+        public async Task<bool> DeleteAppointmentByIdAsync(int id)
         {
             var rowsAffected = await _appointmentRepository.DeleteAsync(id);
-            
+
             return rowsAffected > 0;
         }
 

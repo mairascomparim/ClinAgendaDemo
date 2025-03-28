@@ -16,12 +16,14 @@ namespace ClinAgenda.src.WebAPI.Controllers
         private readonly DoctorUseCase _doctorUseCase;
         private readonly StatusUseCase _statusUseCase;
         private readonly SpecialtyUseCase _specialtyUseCase;
+        private readonly AppointmentUseCase _appointmentUseCase;
 
-        public DoctorController(DoctorUseCase doctorUseCase, StatusUseCase statusUseCase, SpecialtyUseCase specialtyUseCase)
+        public DoctorController(DoctorUseCase doctorUseCase, StatusUseCase statusUseCase, SpecialtyUseCase specialtyUseCase, AppointmentUseCase appointmentUseCase)
         {
             _doctorUseCase = doctorUseCase;
             _statusUseCase = statusUseCase;
             _specialtyUseCase = specialtyUseCase;
+            _appointmentUseCase = appointmentUseCase;
         }
         [HttpGet("list")]
         public async Task<IActionResult> GetDoctors([FromQuery] string? name, [FromQuery] int? specialtyId, [FromQuery] int? statusId, [FromQuery] int itemsPerPage = 10, [FromQuery] int page = 1)
@@ -98,6 +100,31 @@ namespace ClinAgenda.src.WebAPI.Controllers
             if (doctor == null) return NotFound();
             return Ok(doctor);
         }
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> DeleteDoctorAsync(int id)
+        {
+            try
+            {
+                var doctorInfo = await _doctorUseCase.GetDoctorByIdAsync(id);
 
+                var appointment = await _appointmentUseCase.GetAppointmentsAsync(null, doctorName: doctorInfo.Name, null, 1, 1);
+
+                if (appointment.Total > 0)
+                    return NotFound($"Erro ao deletar, Doutor com agendamento marcado");
+
+                var success = await _doctorUseCase.DeleteDoctorByIdAsync(id);
+
+                if (!success)
+                {
+                    return NotFound($"Doutor com ID {id} não encontrado.");
+                }
+
+                return Ok("Doutor deletado com sucesso");
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
     }
 }
