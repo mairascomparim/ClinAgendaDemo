@@ -118,8 +118,8 @@ namespace ClinAgenda.src.WebAPI.Controllers
             }
 
         }
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePatientAsync(int id)
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> DeleteAppointmentAsync(int id)
         {
             try
             {
