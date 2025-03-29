@@ -123,7 +123,7 @@ namespace ClinAgenda.src.WebAPI.Controllers
         {
             try
             {
-                var success = await _appointmentUseCase.DeletAppointmentByIdAsync(id);
+                var success = await _appointmentUseCase.DeleteAppointmentByIdAsync(id);
 
                 if (!success)
                 {
