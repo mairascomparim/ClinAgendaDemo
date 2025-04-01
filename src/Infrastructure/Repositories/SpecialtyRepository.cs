@@ -32,12 +32,18 @@ namespace ClinAgenda.src.Infrastructure.Repositories
 
             return specialty;
         }
-        public async Task<(int total, IEnumerable<SpecialtyDTO> specialtys)> GetAllAsync(int? itemsPerPage, int? page)
+        public async Task<(int total, IEnumerable<SpecialtyDTO> specialtys)> GetAllAsync(string? name, int? itemsPerPage, int? page)
         {
             var queryBase = new StringBuilder(@"
                 FROM SPECIALTY S WHERE 1 = 1");
 
             var parameters = new DynamicParameters();
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                queryBase.Append(" AND S.NAME LIKE @Name");
+                parameters.Add("Name", $"%{name}%");
+            }
 
             var countQuery = $"SELECT COUNT(DISTINCT S.ID) {queryBase}";
             int total = await _connection.ExecuteScalarAsync<int>(countQuery, parameters);
