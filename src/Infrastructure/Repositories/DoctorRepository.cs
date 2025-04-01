@@ -18,9 +18,9 @@ namespace ClinAgenda.src.Infrastructure.Repositories
         {
             _connection = connection;
         }
-        public async Task<IEnumerable<DoctorListDTO>> GetDoctorsAsync(string? name, int? specialtyId, int? statusId, int offset, int itemsPerPage)
+        public async Task<(int total, IEnumerable<DoctorListDTO> doctors)> GetDoctorsAsync(string? name, int? specialtyId, int? statusId, int offset, int itemsPerPage)
         {
-            
+
             var innerJoins = new StringBuilder(@"
                 FROM DOCTOR D
                 INNER JOIN STATUS S ON D.STATUSID = S.ID
@@ -28,25 +28,28 @@ namespace ClinAgenda.src.Infrastructure.Repositories
                 WHERE 1 = 1 ");
 
             var parameters = new DynamicParameters();
-            
+
             if (!string.IsNullOrEmpty(name))
             {
-                innerJoins.Append("AND D.NAME LIKE @Name");
+                innerJoins.Append(" AND D.NAME LIKE @Name");
                 parameters.Add("Name", $"%{name}%");
             }
 
             if (specialtyId.HasValue)
             {
-                innerJoins.Append("AND DSPE.SPECIALTYID = @SpecialtyId");
+                innerJoins.Append(" AND DSPE.SPECIALTYID = @SpecialtyId");
                 parameters.Add("SpecialtyId", specialtyId.Value);
             }
 
             if (statusId.HasValue)
             {
-                innerJoins.Append("AND S.ID = @StatusId");
+                innerJoins.Append(" AND S.ID = @StatusId");
                 parameters.Add("StatusId", statusId.Value);
             }
 
+            var countQuery = $"SELECT COUNT(DISTINCT D.ID) {innerJoins}";
+            int total = await _connection.ExecuteScalarAsync<int>(countQuery, parameters);
+            
             parameters.Add("LIMIT", itemsPerPage);
             parameters.Add("OFFSET", offset);
 
@@ -60,7 +63,9 @@ namespace ClinAgenda.src.Infrastructure.Repositories
                 ORDER BY D.ID
                 LIMIT @Limit OFFSET @Offset";
 
-            return await _connection.QueryAsync<DoctorListDTO>(query.ToString(), parameters);
+                var doctors = await _connection.QueryAsync<DoctorListDTO>(query.ToString(), parameters);
+
+                return (total, doctors);
         }
 
         public async Task<IEnumerable<SpecialtyDoctorDTO>> GetDoctorSpecialtiesAsync(int[] doctorIds)
