@@ -24,11 +24,11 @@ namespace ClinAgenda.src.WebAPI.Controllers
             _appointmentUseCase = appointmentUseCase;
         }
         [HttpGet("list")]
-        public async Task<IActionResult> GetPatientsAsync([FromQuery] string? name, [FromQuery] string? documentNumber, [FromQuery] int? patientId, [FromQuery] int itemsPerPage = 10, [FromQuery] int page = 1)
+        public async Task<IActionResult> GetPatientsAsync([FromQuery] string? name, [FromQuery] string? documentNumber, [FromQuery] int? statusId, [FromQuery] int itemsPerPage = 10, [FromQuery] int page = 1)
         {
             try
             {
-                var result = await _patientUseCase.GetPatientsAsync(name, documentNumber, patientId, itemsPerPage, page);
+                var result = await _patientUseCase.GetPatientsAsync(name, documentNumber, statusId, itemsPerPage, page);
                 return Ok(result);
             }
             catch (Exception ex)
