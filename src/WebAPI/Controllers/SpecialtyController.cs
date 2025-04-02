@@ -99,7 +99,7 @@ namespace ClinAgenda.src.WebAPI.Controllers
                     return NotFound($"Especialidade com ID {id} não encontrada.");
                 }
 
-                return BadRequest();
+                return Ok();
             }
             catch (InvalidOperationException ex)
             {
