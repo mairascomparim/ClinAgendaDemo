@@ -43,5 +43,10 @@ namespace ClinAgendaAPI.StatusUseCase
 
             return newStatusId; // Retorna o ID do novo status criado.
         }
+        public async Task<bool> DeleteStatusByIdAsync(int id)
+        {
+            var rowsAffected = await _statusRepository.DeleteStatusAsync(id);
+            return rowsAffected > 0;
+        }
     }
 }

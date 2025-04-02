@@ -14,9 +14,11 @@ namespace ClinAgenda.src.WebAPI.Controllers
     public class SpecialtyController : ControllerBase
     {
         private readonly SpecialtyUseCase _specialtyUsecase;
-        public SpecialtyController(SpecialtyUseCase service)
+        private readonly DoctorUseCase _doctorUseCase;
+        public SpecialtyController(SpecialtyUseCase service, DoctorUseCase doctorUseCase)
         {
             _specialtyUsecase = service;
+            _doctorUseCase = doctorUseCase;
         }
 
         [HttpGet("list")]
@@ -78,6 +80,30 @@ namespace ClinAgenda.src.WebAPI.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"{ex.Message}");
+            }
+        }
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> DeleteSpecialtyAsync(int id)
+        {
+            try
+            {
+                var hasDoctor = await _doctorUseCase.GetDoctorsAsync(null, specialtyId: id, null, 1, 1);
+
+                if (hasDoctor.Total > 0)
+                    return StatusCode(500, $"A especialidade está associado a um ou mais médicos.");
+
+                var success = await _specialtyUsecase.DeleteSpecialtyByIdAsync(id);
+
+                if (!success)
+                {
+                    return NotFound($"Especialidade com ID {id} não encontrada.");
+                }
+
+                return BadRequest();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
             }
         }
     }

@@ -1,4 +1,5 @@
 using ClinAgenda.src.Application.DTOs.Status;
+using ClinAgenda.src.Application.UseCases;
 using ClinAgendaAPI;
 using ClinAgendaAPI.StatusUseCase;
 using Microsoft.AspNetCore.Mvc;
@@ -10,10 +11,14 @@ namespace ClinAgenda.src.WebAPI.Controllers
     public class StatusController : ControllerBase
     {
         private readonly StatusUseCase _statusUseCase;
+        private readonly PatientUseCase _patientUseCase;
+        private readonly DoctorUseCase _doctorUseCase;
 
-        public StatusController(StatusUseCase service)
+        public StatusController(StatusUseCase service, PatientUseCase patientUseCase, DoctorUseCase doctorUseCase)
         {
             _statusUseCase = service;
+            _doctorUseCase = doctorUseCase;
+            _patientUseCase = patientUseCase;
         }
 
         [HttpGet("list")]
@@ -70,6 +75,24 @@ namespace ClinAgenda.src.WebAPI.Controllers
                 return StatusCode(500, $"{ex.Message}");
             }
         }
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> DeleteStatusAsync(int id)
+        {
+            var hasPatients = await _patientUseCase.GetPatientsAsync(null, null, statusId: id, 1, 1);
+            var hasDoctor = await _doctorUseCase.GetDoctorsAsync(null, null, statusId: id, 1, 1);
+
+            if (hasPatients.Total > 0 || hasDoctor.Total > 0)
+                return StatusCode(500,$"O status está associado a um ou mais pacientes ou médicos.");
+
+            var success = await _statusUseCase.DeleteStatusByIdAsync(id);
+            
+            if (!success)
+            {
+                return NotFound($"Status com ID {id} não encontrada.");
+            }
+            return Ok();
+        }
+
     }
 
 }
