@@ -24,7 +24,7 @@ namespace ClinAgenda.src.Infrastructure.Repositories
                     PHONENUMBER,
                     DOCUMENTNUMBER,
                     STATUSID,
-                    BIRTHDATE 
+                    DATE_FORMAT(BIRTHDATE, '%d/%m/%Y') AS BIRTHDATE
                 FROM PATIENT
                 WHERE ID = @Id";
 
@@ -68,7 +68,7 @@ namespace ClinAgenda.src.Infrastructure.Repositories
                         P.NAME,
                         P.PHONENUMBER,
                         P.DOCUMENTNUMBER,
-                        P.BIRTHDATE ,
+                        DATE_FORMAT(BIRTHDATE, '%d/%m/%Y') AS BIRTHDATE,
                         P.STATUSID AS STATUSID, 
                         S.NAME AS STATUSNAME
                     {queryBase}
