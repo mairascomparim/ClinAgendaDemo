@@ -15,5 +15,6 @@ namespace ClinAgenda.src.Application.DTOs.Appointment
         public required DoctorReturnAppointmentDTO Doctor { get; set; }
         public required SpecialtyDTO Specialty { get; set; }
         public required string AppointmentDate { get; set; }
+        public required string Observation { get; set; }
     }
 }

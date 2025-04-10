@@ -43,7 +43,8 @@ namespace ClinAgenda.src.Application.UseCases
                             Id = item.SpecialtyId,
                             Name = item.SpecialtyName
                         },
-                        AppointmentDate = item.AppointmentDate
+                        AppointmentDate = item.AppointmentDate,
+                        Observation = item.Observation,
                     };
                 }
             }
