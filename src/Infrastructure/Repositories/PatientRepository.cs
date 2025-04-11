@@ -15,20 +15,22 @@ namespace ClinAgenda.src.Infrastructure.Repositories
             _connection = connection;
         }
 
-        public async Task<PatientDTO?> GetByIdAsync(int id)
+        public async Task<PatientListDTO?> GetByIdAsync(int id)
         {
             const string query = @"
                 SELECT 
-                    ID, 
-                    NAME,
-                    PHONENUMBER,
-                    DOCUMENTNUMBER,
-                    STATUSID,
-                    DATE_FORMAT(BIRTHDATE, '%d/%m/%Y') AS BIRTHDATE
-                FROM PATIENT
-                WHERE ID = @Id";
+                    P.ID, 
+                    P.NAME,
+                    P.PHONENUMBER,
+                    P.DOCUMENTNUMBER,
+                    P.STATUSID,
+                    DATE_FORMAT(P.BIRTHDATE, '%d/%m/%Y') AS BIRTHDATE,
+                    S.NAME AS STATUSNAME
+                FROM PATIENT P
+                INNER JOIN STATUS S ON S.ID = P.STATUSID
+                WHERE P.ID = @Id";
 
-            var patient = await _connection.QueryFirstOrDefaultAsync<PatientDTO>(query, new { Id = id });
+            var patient = await _connection.QueryFirstOrDefaultAsync<PatientListDTO>(query, new { Id = id });
 
             return patient;
         }

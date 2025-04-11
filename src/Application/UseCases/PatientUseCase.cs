@@ -46,21 +46,44 @@ namespace ClinAgenda.src.Application.UseCases
             var newPatientId = await _patientRepository.InsertPatientAsync(patientDTO);
             return newPatientId;
         }
-        public async Task<PatientDTO?> GetPatientByIdAsync(int id)
+        public async Task<PatientListReturnDTO?> GetPatientByIdAsync(int id)
         {
-            return await _patientRepository.GetByIdAsync(id);
+            var patient = await _patientRepository.GetByIdAsync(id);
+
+            var returnPatient = new PatientListReturnDTO
+            {
+                Id = patient.Id,
+                Name = patient.Name,
+                PhoneNumber = patient.PhoneNumber,
+                DocumentNumber = patient.DocumentNumber,
+                BirthDate = patient.BirthDate,
+                Status = new StatusDTO
+                {
+                    Id = patient.StatusId,
+                    Name = patient.StatusName
+                }
+            };
+
+            return returnPatient;
         }
         public async Task<bool> UpdatePatientAsync(int patientId, PatientInsertDTO patientDTO)
         {
             var existingPatient = await _patientRepository.GetByIdAsync(patientId) ?? throw new KeyNotFoundException("Paciente não encontrado.");
 
-            existingPatient.Name = patientDTO.Name;
-            existingPatient.PhoneNumber = patientDTO.PhoneNumber;
-            existingPatient.DocumentNumber = patientDTO.DocumentNumber;
-            existingPatient.StatusId = patientDTO.StatusId;
-            existingPatient.BirthDate = patientDTO.BirthDate;
+            if (existingPatient == null)
+            return false;
+            
+            PatientDTO patientUpdate = new PatientDTO
+            {
+                Id = patientId,
+                Name = patientDTO.Name,
+                PhoneNumber = patientDTO.PhoneNumber,
+                DocumentNumber = patientDTO.DocumentNumber,
+                BirthDate = patientDTO.BirthDate,
+                StatusId = patientDTO.StatusId
+            };
 
-            var isUpdated = await _patientRepository.UpdateAsync(existingPatient);
+            var isUpdated = await _patientRepository.UpdateAsync(patientUpdate);
 
             return isUpdated;
         }
