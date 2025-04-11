@@ -58,7 +58,7 @@ namespace ClinAgenda.src.Infrastructure.Repositories
             S.ID AS SPECIALTYID,
             S.NAME AS SPECIALTYNAME,
             S.SCHEDULEDURATION AS SCHEDULEDURATION,
-            A.APPOINTMENTDATE AS APPOINTMENTDATE,
+            DATE_FORMAT(A.APPOINTMENTDATE, '%d/%m/%Y') AS APPOINTMENTDATE,
             A.OBSERVATION AS OBSERVATION
         {queryBase}
         ORDER BY A.ID
@@ -81,7 +81,7 @@ namespace ClinAgenda.src.Infrastructure.Repositories
         }
         public async Task<AppointmentDTO?> GetByIdAsync(int id)
         {
-            string query = "SELECT * FROM Appointment WHERE Id = @Id;";
+            string query = "SELECT *, DATE_FORMAT(APPOINTMENTDATE, '%d/%m/%Y') AS APPOINTMENTDATE FROM Appointment WHERE Id = @Id;";
             return await _connection.QueryFirstOrDefaultAsync<AppointmentDTO>(query, new { Id = id });
         }
         public async Task<bool> UpdateAsync(AppointmentInsertDTO patient)
